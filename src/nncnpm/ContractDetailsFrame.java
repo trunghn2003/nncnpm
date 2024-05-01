@@ -2,12 +2,11 @@ package nncnpm;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 
 public class ContractDetailsFrame extends JFrame {
     public ContractDetailsFrame(ContractDetail_Customer29 contractDetail) {
         setTitle("Chi Tiết Hợp Đồng ID: " + contractDetail.getContractId());
-        setSize(600, 700);  // Adjusted height to accommodate product list
+        setSize(600, 800);  // Increased height to accommodate additional sections
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new GridBagLayout());
 
@@ -20,6 +19,7 @@ public class ContractDetailsFrame extends JFrame {
         headerLabel.setFont(new Font("Arial", Font.BOLD, 16));
         add(headerLabel, gbc);
 
+        // Add contract and partner details
         addComponent("Tên Hợp Đồng:", contractDetail.getName(), gbc);
         addComponent("Tổng Giá:", String.format("$%.2f", contractDetail.getTotalPrice()), gbc);
         addComponent("Tổng Số Lượng:", String.valueOf(contractDetail.getTotalQuantity()), gbc);
@@ -31,11 +31,17 @@ public class ContractDetailsFrame extends JFrame {
         JLabel productsLabel = new JLabel("Danh Sách Sản Phẩm:");
         productsLabel.setFont(new Font("Arial", Font.BOLD, 14));
         add(productsLabel, gbc);
-
-        // List each product
-        for (ProductDetail product : contractDetail.getProductDetails()) {
+        contractDetail.getProductDetails().forEach(product -> {
             addProductComponent("Sản phẩm:", product.getProductName() + " - " + product.getQuantity() + " pcs @ $" + product.getUnitPrice(), gbc);
-        }
+        });
+
+        // Payment Section
+        JLabel paymentLabel = new JLabel("Danh Sách Giao Dịch Thanh Toán:");
+        paymentLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        add(paymentLabel, gbc);
+        contractDetail.getInvoices().forEach(invoice -> {
+            addInvoiceComponent("Ngày Thanh Toán:", invoice.getPaymentDate() + " - " + invoice.getTotalPayment() + " paid, " + invoice.getTotalOutstanding() + " outstanding", invoice.isStatus(), gbc);
+        });
 
         pack();
         setLocationRelativeTo(null);
@@ -66,7 +72,6 @@ public class ContractDetailsFrame extends JFrame {
         valueLabel1.setForeground(new Color(25, 25, 112));
         add(valueLabel1, gbc);
 
-        gbc.gridwidth = 1;
         JLabel jLabel2 = new JLabel(label2);
         jLabel2.setFont(new Font("Arial", Font.PLAIN, 14));
         add(jLabel2, gbc);
@@ -84,5 +89,13 @@ public class ContractDetailsFrame extends JFrame {
         productLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         productLabel.setForeground(new Color(112, 128, 144));  // Slate gray color for product details
         add(productLabel, gbc);
+    }
+
+    private void addInvoiceComponent(String label, String value, boolean status, GridBagConstraints gbc) {
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        JLabel invoiceLabel = new JLabel(label + " " + value + (status ? " (Completed)" : " (Pending)"));
+        invoiceLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        invoiceLabel.setForeground(status ? new Color(0, 128, 0) : new Color(255, 69, 0));  // Green for completed, red for pending
+        add(invoiceLabel, gbc);
     }
 }

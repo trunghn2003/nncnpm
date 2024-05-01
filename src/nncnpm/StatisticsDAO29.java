@@ -104,18 +104,22 @@ public class StatisticsDAO29 {
   public ContractDetail_Customer29 getDetailContract(int contractId) {
         ContractDetail_Customer29 contractDetail = null;
         List<ProductDetail> products = new ArrayList<>();
+        List<Invoice_Customer29> invoices = new ArrayList<>();
 
         String sql = """
                      SELECT c.Id, c.Name, c.TotalPrice, c.TotalQuantity, c.SigningDate, c.LoanPeriod,
-                                                              cu.CustomerName AS CustomerName, p.PartnerName AS PartnerName,
-                                                              pr.Id as ProductId, pr.ProductName, pr.UnitPrice, cpp.Quantity
-                                                              FROM tblContract29 c
-                                                              LEFT JOIN tblCustomer29 cu ON c.CustomerId = cu.Id
-                                                              LEFT JOIN tblContract_Partner_Product29 cpp ON c.Id = cpp.ContractId
-                                                              LEFT JOIN tblPartner_Product29 ppp ON cpp.Partner_ProductId = ppp.Id
-                                                              LEFT JOIN tblProduct29 pr ON ppp.ProductId = pr.Id
-                                                              LEFT JOIN tblPartner29 p ON ppp.PartnerId = p.Id
-                                                              WHERE c.Id = ?;
+                                                                                      cu.CustomerName AS CustomerName, p.PartnerName AS PartnerName,
+                                                                                      pr.Id as ProductId, pr.ProductName, pr.UnitPrice, cpp.Quantity,
+                                                                                      inv.id AS InvoiceId, inv.status AS InvoiceStatus, inv.paymentDate AS PaymentDate,
+                                                                                      inv.totalPayment AS TotalPayment, inv.totalOutstanding AS TotalOutstanding
+                                                                               FROM tblContract29 c
+                                                                               LEFT JOIN tblCustomer29 cu ON c.CustomerId = cu.Id
+                                                                               LEFT JOIN tblContract_Partner_Product29 cpp ON c.Id = cpp.ContractId
+                                                                               LEFT JOIN tblPartner_Product29 ppp ON cpp.Partner_ProductId = ppp.Id
+                                                                               LEFT JOIN tblProduct29 pr ON ppp.ProductId = pr.Id
+                                                                               LEFT JOIN tblPartner29 p ON ppp.PartnerId = p.Id
+                                                                               LEFT JOIN tblInvoiceCustomer29 inv ON c.Id = inv.ContractId
+                                                                               WHERE c.Id = ?;
                      """;
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, contractId);
@@ -132,6 +136,7 @@ public class StatisticsDAO29 {
                         rs.getString("CustomerName"),
                         rs.getString("PartnerName"),
                         products // Passing the list to store product details
+                        ,invoices
                     );
                 }
                 products.add(new ProductDetail(
@@ -140,6 +145,9 @@ public class StatisticsDAO29 {
                     rs.getFloat("UnitPrice"),
                     rs.getInt("Quantity")
                 ));
+                invoices.add(new Invoice_Customer29(
+                rs.getInt("InvoiceId"), contractId, rs.getBoolean("InvoiceStatus"),
+                rs.getString("PaymentDate"), rs.getFloat("TotalPayment"), rs.getFloat("TotalOutstanding")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
