@@ -18,7 +18,7 @@ public class CustomerContractsFrame extends JFrame {
      */
     public CustomerContractsFrame(List<CustomerContractStatistics29> contracts, StatisticsDAO29 statisticsDAO) {
         this.statisticsDAO = statisticsDAO; 
-    setTitle("Customer Contracts");
+    setTitle("Thống kê hợp đồng của khách hàng");
     setSize(800, 400);
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     setLayout(new BorderLayout());
@@ -28,7 +28,7 @@ public class CustomerContractsFrame extends JFrame {
     add(new JScrollPane(table), BorderLayout.CENTER);
 
     // Tạo nút "View Details"
-    JButton btnViewDetails = new JButton("View Details");
+    JButton btnViewDetails = new JButton("Xem Chi Tiết");
     btnViewDetails.addActionListener(e -> viewDetails());
     add(btnViewDetails, BorderLayout.SOUTH);
 }
@@ -39,8 +39,8 @@ public class CustomerContractsFrame extends JFrame {
      */
     private void initializeTable() {
         String[] columnNames = {
-            "Contract ID", "Signing Date", "Total Loan", "Total Payments",
-            "Total Outstanding", "Total Overdue"
+            "Mã Hợp Đồng", "Ngày Ký", "Tổng Vay", "Tổng Thanh Toán",
+            "Tổng Còn Lại", "Tổng Quá Hạn"
         };
         tableModel = new DefaultTableModel(null, columnNames) {
             @Override

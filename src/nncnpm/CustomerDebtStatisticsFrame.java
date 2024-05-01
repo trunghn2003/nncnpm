@@ -34,14 +34,14 @@ public class CustomerDebtStatisticsFrame extends JFrame {
     
 
     private void initializeUI() {
-        setTitle("Customer Debt Statistics");
+        setTitle("Thống Kê Khách Hàng Theo Dư nợ");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
         tableModel = new DefaultTableModel();
        tableModel.setColumnIdentifiers(new String[]{
-    "Customer ID", "Customer Name", "Phone Number", "Total Outstanding Debt", "Total Overdue Debt"
+    "Mã Khách Hàng", "Tên Khách Hàng", "Số Điện Thoại", "Tổng Nợ Còn Lại", "Tổng Nợ Quá Hạn"
 });
 
         table = new JTable(tableModel);
@@ -52,7 +52,7 @@ public class CustomerDebtStatisticsFrame extends JFrame {
 
         add(new JScrollPane(table), BorderLayout.CENTER);
 
-        JButton btnDetails = new JButton("View Details");
+        JButton btnDetails = new JButton("Xem Chi Tiết");
         btnDetails.addActionListener(e -> viewCustomerDetails());
         add(btnDetails, BorderLayout.SOUTH);
     }
