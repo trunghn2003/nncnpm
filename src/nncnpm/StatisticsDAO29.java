@@ -41,6 +41,33 @@ public class StatisticsDAO29 {
         }
         return customerStats;
     }
+//   public List<Partner_Product29> getListProductsForContract(int contractId) {
+//        List<Partner_Product29> products = new ArrayList<>();
+//        String sql = """
+//                     SELECT pr.Id, pr.ProductName, pr.UnitPrice, cpp.Quantity
+//                                          FROM tblContract29 c
+//                                          JOIN tblContract_Partner_Product29 cpp ON c.Id = cpp.ContractId
+//                                          JOIN tblPartner_Product29 pp ON cpp.Partner_ProductId = pp.Id
+//                                          JOIN tblProduct29 pr ON pp.ProductId = pr.Id
+//                                          WHERE c.Id = ?
+//                     """;
+//        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+//            stmt.setInt(1, contractId);
+//            ResultSet rs = stmt.executeQuery();
+//            while (rs.next()) {
+//                Partner_Product29 product = new Partner_Product29(
+//                    rs.getInt("ProductId"),
+//                    rs.getString("ProductName"),
+//                    rs.getInt("Quantity"),
+//                    rs.getFloat("UnitPrice")
+//                );
+//                products.add(product);
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return products;
+//    }
 
    public List<CustomerContractStatistics29> getListContract(Customer29 customer) {
         List<CustomerContractStatistics29> contractStats = new ArrayList<>();
@@ -75,42 +102,50 @@ public class StatisticsDAO29 {
         return contractStats;
     }
   public ContractDetail_Customer29 getDetailContract(int contractId) {
-    ContractDetail_Customer29 contractDetail = null;
-    String sql = """
-                 SELECT c.Id, c.Name, c.TotalPrice, c.TotalQuantity, c.SigningDate, c.LoanPeriod,
-                                         cu.CustomerName AS CustomerName, p.PartnerName AS PartnerName
-                                  FROM tblContract29 c
-                                  LEFT JOIN tblCustomer29 cu ON c.CustomerId = cu.Id
-                                  LEFT JOIN tblContract_Partner_Product29 cpp ON c.Id = cpp.ContractId
-                                  LEFT JOIN tblPartner_Product29 pp ON cpp.Partner_ProductId = pp.Id
-                                  LEFT JOIN tblPartner29 p ON pp.PartnerId = p.Id
-                                  WHERE c.Id = ?
-                                  GROUP BY c.Id, c.Name, cu.CustomerName, p.PartnerName, c.TotalPrice, c.TotalQuantity, c.SigningDate, c.LoanPeriod
-                 """;
-    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-        stmt.setInt(1, contractId);
-        ResultSet rs = stmt.executeQuery();
-        if (rs.next()) {
-            contractDetail = new ContractDetail_Customer29(
-                rs.getInt("Id"),
-                rs.getString("Name"),
-                rs.getFloat("TotalPrice"),
-                rs.getInt("TotalQuantity"),
-                rs.getString("SigningDate"),
-                rs.getInt("LoanPeriod"),
-                rs.getString("CustomerName"),
-                rs.getString("PartnerName")
-            );
+        ContractDetail_Customer29 contractDetail = null;
+        List<ProductDetail> products = new ArrayList<>();
+
+        String sql = """
+                     SELECT c.Id, c.Name, c.TotalPrice, c.TotalQuantity, c.SigningDate, c.LoanPeriod,
+                                                              cu.CustomerName AS CustomerName, p.PartnerName AS PartnerName,
+                                                              pr.Id as ProductId, pr.ProductName, pr.UnitPrice, cpp.Quantity
+                                                              FROM tblContract29 c
+                                                              LEFT JOIN tblCustomer29 cu ON c.CustomerId = cu.Id
+                                                              LEFT JOIN tblContract_Partner_Product29 cpp ON c.Id = cpp.ContractId
+                                                              LEFT JOIN tblPartner_Product29 ppp ON cpp.Partner_ProductId = ppp.Id
+                                                              LEFT JOIN tblProduct29 pr ON ppp.ProductId = pr.Id
+                                                              LEFT JOIN tblPartner29 p ON ppp.PartnerId = p.Id
+                                                              WHERE c.Id = ?;
+                     """;
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, contractId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                if (contractDetail == null) {
+                    contractDetail = new ContractDetail_Customer29(
+                        rs.getInt("Id"),
+                        rs.getString("Name"),
+                        rs.getFloat("TotalPrice"),
+                        rs.getInt("TotalQuantity"),
+                        rs.getString("SigningDate"),
+                        rs.getInt("LoanPeriod"),
+                        rs.getString("CustomerName"),
+                        rs.getString("PartnerName"),
+                        products // Passing the list to store product details
+                    );
+                }
+                products.add(new ProductDetail(
+                    rs.getInt("ProductId"),
+                    rs.getString("ProductName"),
+                    rs.getFloat("UnitPrice"),
+                    rs.getInt("Quantity")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return contractDetail;
     }
-    return contractDetail;
-}
-
-
-
-
   
 
 }
