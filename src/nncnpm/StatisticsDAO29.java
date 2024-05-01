@@ -77,9 +77,15 @@ public class StatisticsDAO29 {
   public ContractDetail_Customer29 getDetailContract(int contractId) {
     ContractDetail_Customer29 contractDetail = null;
     String sql = """
-                 SELECT Id, Name, totalPrice, totalQuantity, signingDate, loanPeriod
-                 FROM tblContract29
-                 WHERE Id = ?
+                 SELECT c.Id, c.Name, c.TotalPrice, c.TotalQuantity, c.SigningDate, c.LoanPeriod,
+                                         cu.CustomerName AS CustomerName, p.PartnerName AS PartnerName
+                                  FROM tblContract29 c
+                                  LEFT JOIN tblCustomer29 cu ON c.CustomerId = cu.Id
+                                  LEFT JOIN tblContract_Partner_Product29 cpp ON c.Id = cpp.ContractId
+                                  LEFT JOIN tblPartner_Product29 pp ON cpp.Partner_ProductId = pp.Id
+                                  LEFT JOIN tblPartner29 p ON pp.PartnerId = p.Id
+                                  WHERE c.Id = ?
+                                  GROUP BY c.Id, c.Name, cu.CustomerName, p.PartnerName, c.TotalPrice, c.TotalQuantity, c.SigningDate, c.LoanPeriod
                  """;
     try (PreparedStatement stmt = connection.prepareStatement(sql)) {
         stmt.setInt(1, contractId);
@@ -88,10 +94,12 @@ public class StatisticsDAO29 {
             contractDetail = new ContractDetail_Customer29(
                 rs.getInt("Id"),
                 rs.getString("Name"),
-                rs.getFloat("totalPrice"),
-                rs.getInt("totalQuantity"),
-                rs.getString("signingDate"),
-                rs.getInt("loanPeriod")
+                rs.getFloat("TotalPrice"),
+                rs.getInt("TotalQuantity"),
+                rs.getString("SigningDate"),
+                rs.getInt("LoanPeriod"),
+                rs.getString("CustomerName"),
+                rs.getString("PartnerName")
             );
         }
     } catch (SQLException e) {
@@ -99,6 +107,8 @@ public class StatisticsDAO29 {
     }
     return contractDetail;
 }
+
+
 
 
   
