@@ -5,8 +5,9 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
+import nncnpm.DAO.StatisticsDAO29;
 import nncnpm.Model.*;
-import nncnpm.StatisticsDAO29;
+
 /**
  * JFrame to display customer contract statistics in a table.
  */
@@ -118,9 +119,3 @@ public class CustomerContractsFrame extends JFrame {
         }
     }
 }
-
-//private ContractDetail_Customer29 fetchContractDetails(int contractId) {
-//    // Code để lấy chi tiết hợp đồng từ cơ sở dữ liệu hoặc một nguồn khác
-//    return new ContractDetail_Customer29(); // Trả
-//
-//}

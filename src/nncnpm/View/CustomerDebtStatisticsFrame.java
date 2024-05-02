@@ -8,8 +8,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nncnpm.DAO.DatabaseConnector;
+import nncnpm.DAO.StatisticsDAO29;
 import nncnpm.Model.*;
-import nncnpm.StatisticsDAO29;
+
 
 public class CustomerDebtStatisticsFrame extends JFrame {
     private StatisticsDAO29 statisticsDAO;
