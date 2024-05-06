@@ -11,7 +11,7 @@ import nncnpm.Model.*;
 /**
  * JFrame to display customer contract statistics in a table.
  */
-public class CustomerContractsFrame extends JFrame {
+public class GDCustomerContractStatistics29 extends JFrame {
     private JTable table;
     private DefaultTableModel tableModel;
     private StatisticsDAO29 statisticsDAO;  //
@@ -20,7 +20,7 @@ public class CustomerContractsFrame extends JFrame {
      *
      * @param contracts A list of CustomerContractStatistics29 representing contract details.
      */
-    public CustomerContractsFrame(List<CustomerContractStatistics29> contracts, StatisticsDAO29 statisticsDAO) {
+    public GDCustomerContractStatistics29(List<CustomerContractStatistics29> contracts, StatisticsDAO29 statisticsDAO) {
         this.statisticsDAO = statisticsDAO; 
     setTitle("Thống kê hợp đồng của khách hàng");
     setSize(800, 400);
@@ -109,7 +109,7 @@ public class CustomerContractsFrame extends JFrame {
             int contractId = (int) tableModel.getValueAt(selectedRow, 0);
             ContractDetail_Customer29 contractDetail = statisticsDAO.getDetailContract(contractId);
             if (contractDetail != null) {
-                JFrame detailsFrame = new ContractDetailsFrame(contractDetail);
+                JFrame detailsFrame = new GDContractDetail29(contractDetail);
                 detailsFrame.setVisible(true);
             } else {
                 JOptionPane.showMessageDialog(this, "No details available for the selected contract.", "Detail Error", JOptionPane.ERROR_MESSAGE);

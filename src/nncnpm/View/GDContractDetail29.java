@@ -4,9 +4,9 @@ import javax.swing.*;
 import nncnpm.Model.ContractDetail_Customer29;
 import nncnpm.Model.Contract_Partner_Product29;
 
-public class ContractDetailsFrame extends JFrame {
+public class GDContractDetail29 extends JFrame {
 
-    public ContractDetailsFrame(ContractDetail_Customer29 contractDetail) {
+    public GDContractDetail29(ContractDetail_Customer29 contractDetail) {
         // Setting up the frame
         setTitle("Chi Tiết Hợp Đồng ID: " + contractDetail.getContractId());
         setSize(600, 800);

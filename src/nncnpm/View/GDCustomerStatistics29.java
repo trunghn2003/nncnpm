@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,7 +13,7 @@ import nncnpm.DAO.StatisticsDAO29;
 import nncnpm.Model.*;
 
 
-public class CustomerDebtStatisticsFrame extends JFrame {
+public class GDCustomerStatistics29 extends JFrame {
     private StatisticsDAO29 statisticsDAO;
     private JTable table;
     private DefaultTableModel tableModel;
@@ -24,14 +25,18 @@ public class CustomerDebtStatisticsFrame extends JFrame {
         Customer29 customer = new Customer29(customerId, "", "", "");  // Giả định cấu trúc của Customer29
         List<CustomerContractStatistics29> contracts = statisticsDAO.getListContract(customer);
 
+        if(contracts == null) {
+                   JOptionPane.showMessageDialog(this, "khách hàng không có hợp đồng nào", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+
+        }
         EventQueue.invokeLater(() -> {
-            CustomerContractsFrame contractsFrame = new CustomerContractsFrame(contracts, statisticsDAO );
+            GDCustomerContractStatistics29 contractsFrame = new GDCustomerContractStatistics29(contracts, statisticsDAO );
             contractsFrame.setVisible(true);
         });
     }
 }
 
-    public CustomerDebtStatisticsFrame(StatisticsDAO29 statisticsDAO) {
+    public GDCustomerStatistics29(StatisticsDAO29 statisticsDAO) {
         this.statisticsDAO = statisticsDAO;
         initializeUI();
     }
@@ -63,7 +68,12 @@ public class CustomerDebtStatisticsFrame extends JFrame {
 
     private void loadData() {
     List<CustomerStatistics29> customerStats = statisticsDAO.getListCustomer();
+//    List<CustomerStatistics29> customerStats = new ArrayList<>();
 
+     if (customerStats.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Không có khách hàng nào", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
     double totalOutstandingDebt = 0.0;
     double totalOverdueDebt = 0.0;
 
@@ -101,11 +111,11 @@ public class CustomerDebtStatisticsFrame extends JFrame {
         try {
             connection = DatabaseConnector.getConnection(); // Initialize your database connection here
         } catch (SQLException ex) {
-            Logger.getLogger(CustomerDebtStatisticsFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GDCustomerStatistics29.class.getName()).log(Level.SEVERE, null, ex);
         }
         StatisticsDAO29 dao = new StatisticsDAO29(connection);
         EventQueue.invokeLater(() -> {
-            CustomerDebtStatisticsFrame frame = new CustomerDebtStatisticsFrame(dao);
+            GDCustomerStatistics29 frame = new GDCustomerStatistics29(dao);
             frame.setVisible(true);
         });
     }
